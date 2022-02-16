@@ -54,8 +54,6 @@ class JwtUtilsTest {
     @Order(2)
     void decodeJwt() {
         // Decode JWT token
-        System.out.println("decodeJwt()" + jwtToken);
-
         try {
             Claims claims = JwtUtils.decodeJwt(SECRET_KEY_HS256, signatureAlgorithm, jwtToken);
 
@@ -63,12 +61,13 @@ class JwtUtilsTest {
             assertThat(claims.get("name", String.class)).matches("\"John Doe\"");
             assertThat(claims.get("admin", Boolean.class)).isTrue();
 
-            System.out.println("iat: " + claims.getIssuedAt());
-            System.out.println("exp: " + claims.getExpiration());
+            long iat = claims.getIssuedAt().toInstant().toEpochMilli();
+            long expiresAfter = 1 * 60 * 60 * 1000; // 1 hour
+
+            assertThat(claims.getExpiration().toInstant().toEpochMilli()).isEqualTo(iat + expiresAfter);
 
         } catch (JwtException jwtException) {
             System.err.println(jwtException.getMessage());
         }
-
     }
 }
