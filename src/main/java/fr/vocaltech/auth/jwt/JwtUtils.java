@@ -12,13 +12,6 @@ import java.util.Base64;
 import java.util.Date;
 
 public class JwtUtils {
-    @SuppressWarnings("SpellCheckingInspection")
-    private static final String SECRET_KEY_HS256 = "NTNv7j0TuYARvmNMmWXo6fKvM4o6nv/aUi9ryX38ZH+L1bkrnD1ObOQ8JAUmHCBq7Iy7otZcyAagBLHVKvvYaIpmMuxmARQ97jUVG16Jkpkp1wXOPsrF9zwew6TpczyHkHgX5EuLg2MeBuiT/qJACs1J0apruOOJCg/gOtkjB4c=";
-
-    @SuppressWarnings("SpellCheckingInspection")
-    //private static final String JWT_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTY0NDg0MjU2OCwiZXhwIjoxNjQ0ODQ2MTY4fQ.jAV7WWlLMcieOoa68qLyr2BuGJqL4aYpBGBzF-Q4tj8ywYIbItgwOgHOKJquOPYsA2dkAFtCOQJl1ESXHNCloA";
-    private static final String JWT_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTY0NDk1NDk3OCwiZXhwIjoxNjQ0OTU4NTc4fQ._YMGRlZkyhHQ3mSzVvNV5CUX-YYpouSjnskvbqvlsRoe8dTpSJCSKZifVeovqxKGUjuOU_fEWJ0s2kKrSH8x8A";
-
     /**
      * Generate a secret key HS256
      * @return the secret key
@@ -40,7 +33,9 @@ public class JwtUtils {
     }
 
     /**
-     * Issue JWT token (JWS)
+     *
+     * @param payload the payload in JSON format
+     * @param expiresAfter expiresAfter value
      * @param privateKey the private key to use to sign the payload
      * @param signatureAlgorithm the algorithm to be used for the signature
      * @return the Jwt token
@@ -50,17 +45,6 @@ public class JwtUtils {
 
         long iat = Instant.now().getEpochSecond() * 1000;
         long exp = iat + expiresAfter;
-
-        /*
-        JwtBuilder jwtBuilder = Jwts.builder()
-                .setSubject("1234567890")
-                .claim("name", "John Doe")
-                .claim("admin", true)
-                .setIssuedAt(new Date(1644954978000L))
-                .setExpiration(new Date(1644958578000L))
-                .signWith(signingKey);
-
-         */
 
         JwtBuilder jwtBuilder = Jwts.builder()
                 .setSubject(payload.get("sub").toString())
@@ -73,6 +57,14 @@ public class JwtUtils {
         return jwtBuilder.compact();
     }
 
+    /**
+     *
+     * @param publicKey the public key (public/private keypair used to sign the payload)
+     * @param signatureAlgorithm the algorithm used for the  payload signature
+     * @param jwtToken the JWS token
+     * @return claims
+     * @throws JwtException Exception ...
+     */
     public static Claims decodeJwt(String publicKey, SignatureAlgorithm signatureAlgorithm, String jwtToken) throws JwtException {
         Key key = generateKeyFromString(publicKey, signatureAlgorithm);
 
