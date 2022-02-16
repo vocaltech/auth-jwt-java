@@ -2,7 +2,7 @@
 ### Generate a JWT token
 
 ```
-String issueJwt(String privateKey, SignatureAlgorithm signatureAlgorithm)
+String issueJwt(JsonObject payload, long expiresAfter, String privateKey, SignatureAlgorithm signatureAlgorithm)
 ```
 
 ### Decode a JWT token
