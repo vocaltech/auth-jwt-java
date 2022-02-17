@@ -40,21 +40,26 @@ public class JwtUtils {
      * @param signatureAlgorithm the algorithm to be used for the signature
      * @return the Jwt token
      */
-    public static String issueJwt(JsonObject payload, long expiresAfter, String privateKey, SignatureAlgorithm signatureAlgorithm) {
+    public static String issueJwt(JsonObject payload, Long expiresAfter, String privateKey, SignatureAlgorithm signatureAlgorithm) {
         Key signingKey = generateKeyFromString(privateKey, signatureAlgorithm);
 
         long iat = Instant.now().getEpochSecond() * 1000;
-        long exp = iat + expiresAfter;
+        long exp;
 
         JwtBuilder jwtBuilder = Jwts.builder()
-                .setSubject(payload.get("sub").toString())
-                .claim("name", payload.get("name").toString())
+                .setSubject(payload.get("sub").getAsString())
+                .claim("name", payload.get("name").getAsString())
                 .claim("admin", payload.get("admin"))
-                .setIssuedAt(new Date(iat))
-                .setExpiration(new Date(exp))
-                .signWith(signingKey);
+                .setIssuedAt(new Date(iat));
 
-        return jwtBuilder.compact();
+        if (expiresAfter == null) {
+            jwtBuilder.setExpiration(null);
+        } else {
+            exp = iat + expiresAfter;
+            jwtBuilder.setExpiration(new Date(exp));
+        }
+
+        return jwtBuilder.signWith(signingKey).compact();
     }
 
     /**
