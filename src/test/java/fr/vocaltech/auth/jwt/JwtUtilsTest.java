@@ -118,4 +118,20 @@ class JwtUtilsTest {
         assertThat(keyPair.getPublic().getAlgorithm()).isEqualTo("RSA");
         assertThat(keyPair.getPublic()).isInstanceOf(PublicKey.class);
     }
+
+    @Test
+    @Order(6)
+    void testGenerateRSAPEM() {
+        KeyPair keyPair = JwtUtils.generateKeyPairRSA();
+
+        assert keyPair != null;
+
+        String[] pemKeys = JwtUtils.generateRSAPEM(keyPair);
+
+        assertThat(pemKeys[0]).startsWith("-----BEGIN PRIVATE KEY-----");
+        assertThat(pemKeys[0]).endsWith("-----END PRIVATE KEY-----");
+
+        assertThat(pemKeys[1]).startsWith("-----BEGIN PUBLIC KEY-----");
+        assertThat(pemKeys[1]).endsWith("-----END PUBLIC KEY-----");
+    }
 }
