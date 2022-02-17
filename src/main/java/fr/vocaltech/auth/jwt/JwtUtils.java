@@ -6,10 +6,7 @@ import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
@@ -22,6 +19,24 @@ public class JwtUtils {
     public static String generateSecretKeyHS256() {
         Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         return Base64.getEncoder().encodeToString(key.getEncoded());
+    }
+
+    public static String[] generateRSAPEM(KeyPair rsaKeyPair) {
+        String[] pemKeys = new String[2];
+
+        // generate private key
+        PrivateKey privateKey = rsaKeyPair.getPrivate();
+        pemKeys[0] = "-----BEGIN PRIVATE KEY-----\n" +
+                Base64.getMimeEncoder().encodeToString(privateKey.getEncoded()) +
+                "\n-----END PRIVATE KEY-----";
+
+        // generate public key
+        PublicKey publicKey = rsaKeyPair.getPublic();
+        pemKeys[1] = "-----BEGIN PUBLIC KEY-----\n" +
+                Base64.getMimeEncoder().encodeToString(publicKey.getEncoded()) +
+                "\n-----END PUBLIC KEY-----";
+
+        return pemKeys;
     }
 
     public static KeyPair generateKeyPairRSA() {
