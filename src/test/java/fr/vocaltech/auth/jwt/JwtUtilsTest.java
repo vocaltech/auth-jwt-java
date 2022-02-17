@@ -34,37 +34,67 @@ class JwtUtilsTest {
 
     @Test
     @Order(1)
-    void issueJwt() {
+    void testIssueJwtWithExpiration() {
         // Create the payload
         JsonObject payload = new JsonObject();
         payload.addProperty("sub", "1234567890");
         payload.addProperty("name", "John Doe");
         payload.addProperty("admin", true);
 
-        System.out.println("payload size: " + payload.size() + " - str: " + payload);
-
         // Issue JWT token
         long expiresAfter = 1 * 60 * 60 * 1000; // 1 hour
         jwtToken = JwtUtils.issueJwt(payload, expiresAfter, SECRET_KEY_HS256, signatureAlgorithm);
 
-        System.out.println("issueJwt()" + jwtToken);
+        System.out.println("token with expiration: " + jwtToken);
     }
 
     @Test
     @Order(2)
-    void decodeJwt() {
+    void testDecodeJwtWithExpiration() {
         // Decode JWT token
         try {
             Claims claims = JwtUtils.decodeJwt(SECRET_KEY_HS256, signatureAlgorithm, jwtToken);
 
-            assertThat(claims.getSubject()).matches("\"1234567890\"");
-            assertThat(claims.get("name", String.class)).matches("\"John Doe\"");
+            assertThat(claims.getSubject()).matches("1234567890");
+            assertThat(claims.get("name", String.class)).matches("John Doe");
             assertThat(claims.get("admin", Boolean.class)).isTrue();
 
             long iat = claims.getIssuedAt().toInstant().toEpochMilli();
             long expiresAfter = 1 * 60 * 60 * 1000; // 1 hour
 
             assertThat(claims.getExpiration().toInstant().toEpochMilli()).isEqualTo(iat + expiresAfter);
+
+        } catch (JwtException jwtException) {
+            System.err.println(jwtException.getMessage());
+        }
+    }
+
+    @Test
+    @Order(3)
+    void testIssueJwtNoExpiration() {
+        // Create the payload
+        JsonObject payload = new JsonObject();
+        payload.addProperty("sub", "1234567890");
+        payload.addProperty("name", "John Doe");
+        payload.addProperty("admin", true);
+
+        // Issue JWT token
+        jwtToken = JwtUtils.issueJwt(payload, null, SECRET_KEY_HS256, signatureAlgorithm);
+
+        System.out.println("token with no expiration: " + jwtToken);
+    }
+
+    @Test
+    @Order(4)
+    void testDecodeJwtWithNoExpiration() {
+        // Decode JWT token
+        try {
+            Claims claims = JwtUtils.decodeJwt(SECRET_KEY_HS256, signatureAlgorithm, jwtToken);
+
+            assertThat(claims.getSubject()).matches("1234567890");
+            assertThat(claims.get("name", String.class)).matches("John Doe");
+            assertThat(claims.get("admin", Boolean.class)).isTrue();
+            assertThat(claims.getExpiration()).isNull();
 
         } catch (JwtException jwtException) {
             System.err.println(jwtException.getMessage());
