@@ -10,6 +10,10 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
 import static com.google.common.truth.Truth.assertThat;
 
 @TestMethodOrder(OrderAnnotation.class)
@@ -99,5 +103,19 @@ class JwtUtilsTest {
         } catch (JwtException jwtException) {
             System.err.println(jwtException.getMessage());
         }
+    }
+
+    @Test
+    @Order(5)
+    void testGenerateKeyPairRSA() {
+        KeyPair keyPair = JwtUtils.generateKeyPairRSA();
+
+        assert keyPair != null;
+
+        assertThat(keyPair.getPrivate().getAlgorithm()).isEqualTo("RSA");
+        assertThat(keyPair.getPrivate()).isInstanceOf(PrivateKey.class);
+
+        assertThat(keyPair.getPublic().getAlgorithm()).isEqualTo("RSA");
+        assertThat(keyPair.getPublic()).isInstanceOf(PublicKey.class);
     }
 }
