@@ -75,7 +75,6 @@ class JwtUtilsTest {
         }
     }
 
-/*
     @Test
     @Order(3)
     void testIssueJwtNoExpiration() {
@@ -86,7 +85,7 @@ class JwtUtilsTest {
         payload.addProperty("admin", true);
 
         // Issue JWT token
-        jwtToken = JwtUtils.issueJwt(payload, null, SECRET_KEY_HS256, signatureAlgorithm);
+        jwtToken = JwtUtils.issueJwt(payload, null, secret_key_hs256, SignatureAlgorithm.HS256);
 
         System.out.println("token with no expiration: " + jwtToken);
     }
@@ -96,7 +95,7 @@ class JwtUtilsTest {
     void testDecodeJwtWithNoExpiration() {
         // Decode JWT token
         try {
-            Claims claims = JwtUtils.decodeJwt(SECRET_KEY_HS256, signatureAlgorithm, jwtToken);
+            Claims claims = JwtUtils.decodeJwt(secret_key_hs256, SignatureAlgorithm.HS256, jwtToken);
 
             assertThat(claims.getSubject()).matches("1234567890");
             assertThat(claims.get("name", String.class)).matches("John Doe");
@@ -108,6 +107,7 @@ class JwtUtilsTest {
         }
     }
 
+/*
     @Test
     @Order(5)
     void testGenerateKeyPairRSA() {
