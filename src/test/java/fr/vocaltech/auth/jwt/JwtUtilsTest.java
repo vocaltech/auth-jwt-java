@@ -15,6 +15,7 @@ import javax.crypto.SecretKey;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -107,7 +108,6 @@ class JwtUtilsTest {
         }
     }
 
-/*
     @Test
     @Order(5)
     void testGenerateKeyPairRSA() {
@@ -118,6 +118,10 @@ class JwtUtilsTest {
         privateKey = keyPair.getPrivate();
         publicKey = keyPair.getPublic();
 
+        System.out.println("privateKey\n" + Base64.getMimeEncoder().encodeToString(privateKey.getEncoded()));
+        System.out.println();
+        System.out.println("publicKey\n" + Base64.getMimeEncoder().encodeToString(publicKey.getEncoded()));
+
         assertThat(privateKey.getAlgorithm()).isEqualTo("RSA");
         assertThat(privateKey).isInstanceOf(PrivateKey.class);
 
@@ -125,6 +129,7 @@ class JwtUtilsTest {
         assertThat(publicKey).isInstanceOf(PublicKey.class);
     }
 
+    /*
     @Test
     @Order(6)
     void testIssueJwtWithPrivateKey() {
