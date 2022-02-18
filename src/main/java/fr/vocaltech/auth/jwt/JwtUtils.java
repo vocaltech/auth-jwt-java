@@ -65,7 +65,7 @@ public class JwtUtils {
     /**
      *
      * @param payload the payload in JSON format
-     * @param expiresAfter expiresAfter value
+     * @param expiresAfter exp claim value (set null for no expiration)
      * @param privateOrSecretKey the private/secret key to use to sign the payload
      * @param signatureAlgorithm the algorithm to be used for the signature
      * @return the Jwt token
