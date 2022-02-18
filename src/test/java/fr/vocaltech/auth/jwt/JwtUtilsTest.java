@@ -129,7 +129,6 @@ class JwtUtilsTest {
         assertThat(publicKey).isInstanceOf(PublicKey.class);
     }
 
-    /*
     @Test
     @Order(6)
     void testIssueJwtWithPrivateKey() {
@@ -140,7 +139,7 @@ class JwtUtilsTest {
         payload.addProperty("admin", true);
 
         // Issue JWT token
-        jwtToken = JwtUtils.issueJwt(payload, null, privateKey, signatureAlgorithm);
+        jwtToken = JwtUtils.issueJwt(payload, null, privateKey, SignatureAlgorithm.RS256);
 
         System.out.println("token with no expiration: " + jwtToken);
     }
@@ -148,7 +147,18 @@ class JwtUtilsTest {
     @Test
     @Order(7)
     void testDecodeJwtWithPublicKey() {
+        // Decode JWT token
+        try {
+            Claims claims = JwtUtils.decodeJwt(publicKey, SignatureAlgorithm.RS256, jwtToken);
 
+            assertThat(claims.getSubject()).matches("1234567890");
+            assertThat(claims.get("name", String.class)).matches("John Doe");
+            assertThat(claims.get("admin", Boolean.class)).isTrue();
+            assertThat(claims.getExpiration()).isNull();
+
+        } catch (JwtException jwtException) {
+            System.err.println(jwtException.getMessage());
+        }
     }
 
     @Test
@@ -166,5 +176,4 @@ class JwtUtilsTest {
         assertThat(pemKeys[1]).startsWith("-----BEGIN PUBLIC KEY-----");
         assertThat(pemKeys[1]).endsWith("-----END PUBLIC KEY-----");
     }
-    */
 }
